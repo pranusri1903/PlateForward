@@ -12,6 +12,12 @@ cd backend && ./mvnw spring-boot:run                               # http://loca
 Flyway creates the schema on startup. A first admin is seeded from `ADMIN_EMAIL` / `ADMIN_PASSWORD`
 (defaults: `admin@plateforward.local` / `admin12345`; override both outside development, along with `JWT_SECRET`).
 
+## Run the frontend
+```bash
+cd frontend && npm install && npm run dev   # http://localhost:5173 (proxies /api to :8080)
+```
+Set `VITE_API_URL` to the backend's address for production builds.
+
 ## API (Phase 1)
 | Method | Path | Who |
 |---|---|---|

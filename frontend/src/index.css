@@ -1,0 +1,39 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/bricolage-grotesque';
+
+/* Design tokens. Rebranding is a matter of changing the brand scale below. */
+@theme {
+  --font-sans: 'Inter Variable', system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque Variable', 'Inter Variable', system-ui, sans-serif;
+
+  --color-brand-50: var(--color-emerald-50);
+  --color-brand-100: var(--color-emerald-100);
+  --color-brand-200: var(--color-emerald-200);
+  --color-brand-300: var(--color-emerald-300);
+  --color-brand-400: var(--color-emerald-400);
+  --color-brand-500: var(--color-emerald-500);
+  --color-brand-600: var(--color-emerald-600);
+  --color-brand-700: var(--color-emerald-700);
+  --color-brand-800: var(--color-emerald-800);
+  --color-brand-900: var(--color-emerald-900);
+
+  --shadow-soft: 0 1px 2px rgb(28 25 23 / 0.04), 0 8px 24px -8px rgb(28 25 23 / 0.08);
+  --shadow-lift: 0 2px 4px rgb(28 25 23 / 0.04), 0 24px 48px -16px rgb(5 150 105 / 0.25);
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body { @apply bg-stone-50 font-sans text-stone-800 antialiased; }
+  h1, h2, h3 { @apply font-display tracking-tight text-stone-900; }
+  ::selection { @apply bg-brand-200; }
+  :focus-visible { @apply outline-2 outline-offset-2 outline-brand-600; }
+}
+
+@utility surface {
+  @apply rounded-3xl bg-white shadow-soft ring-1 ring-stone-200/70;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, ::before, ::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
