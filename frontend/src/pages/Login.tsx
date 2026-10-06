@@ -1,3 +1,4 @@
+import { usePageTitle } from '@/components/hooks'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router'
@@ -10,6 +11,7 @@ import { homePath } from '@/lib/utils'
 const schema = z.object({ email: z.email('Enter a valid email'), password: z.string().min(1, 'Enter your password') })
 
 export default function Login() {
+  usePageTitle('Log in')
   const { user, signIn } = useAuth()
   const navigate = useNavigate()
   const from = (useLocation().state as { from?: string } | null)?.from

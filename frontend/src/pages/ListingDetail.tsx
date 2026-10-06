@@ -5,6 +5,9 @@ import { Link, useNavigate, useParams } from 'react-router'
 import { ConfirmButton } from '@/components/ConfirmButton'
 import { Countdown } from '@/components/Countdown'
 import { EmptyState } from '@/components/EmptyState'
+import { FeedbackForm } from '@/components/FeedbackForm'
+import { usePageTitle } from '@/components/hooks'
+import { Stars } from '@/components/Stars'
 import { StatusPill } from '@/components/StatusPill'
 import { Stepper } from '@/components/Stepper'
 import { Button, buttonStyles } from '@/components/ui/button'
@@ -30,6 +33,7 @@ const Notice = ({ tone, children }: { tone: keyof typeof tones; children: ReactN
 export default function ListingDetail() {
   const { id } = useParams()
   const { data: l, isLoading, error } = useListing(id)
+  usePageTitle(l?.title)
   if (isLoading) return <div className="surface h-96 animate-pulse" aria-busy />
   if (!l) return <EmptyState emoji="🫥" title={error instanceof ApiError && error.status === 404 ? 'This listing no longer exists' : "Couldn't load this listing"}><Link to="/listings" className={cn(buttonStyles({ variant: 'secondary' }), 'mt-4')}>Browse food</Link></EmptyState>
   return <Detail l={l} />
@@ -77,9 +81,24 @@ function Detail({ l }: { l: Listing }) {
             <Stepper listing={l} />
             {l.status === 'EXPIRED' && <div className="mt-6"><Notice tone="red">This listing expired{l.claimer ? ' before it was collected.' : ' without a claim.'}</Notice></div>}
           </section>
+          {l.feedback.length > 0 && (
+            <section className="surface space-y-3 p-6 sm:p-8">
+              <h2 className="mb-1 text-lg font-bold">Reviews &amp; reports</h2>
+              {l.feedback.map((f) => (
+                <div key={f.id} className={cn('rounded-2xl p-4', f.kind === 'REVIEW' ? 'bg-stone-50' : 'bg-red-50')}>
+                  <div className="flex items-center justify-between gap-3 text-sm">
+                    <b className="text-stone-900">{f.author}{f.authorId === user?.id && ' (you)'}</b>
+                    {f.rating ? <Stars value={f.rating} /> : <span className="font-semibold text-red-600">{f.kind === 'NO_SHOW' ? 'No-show report' : 'Issue report'}</span>}
+                  </div>
+                  <p className="mt-1.5 text-sm text-stone-600">{f.text}</p>
+                  {f.resolution && <p className="mt-3 rounded-xl bg-white p-3 text-xs text-stone-600"><b>Resolved by our team:</b> {f.resolution}</p>}
+                </div>
+              ))}
+            </section>
+          )}
         </div>
 
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+        <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <div className="surface space-y-4 p-6 shadow-lift">
             {l.status === 'LISTED' && <div className="flex items-center justify-between text-sm"><span className="text-stone-500">Time remaining</span><Countdown to={l.expiresAt} /></div>}
             <Situation l={l} isDonor={isDonor} />
@@ -90,6 +109,7 @@ function Detail({ l }: { l: Listing }) {
               return <Btn key={a} variant={danger ? 'danger' : 'primary'} size="lg" className="w-full" loading={action.isPending && action.variables === a} disabled={action.isPending} onClick={() => action.mutate(a)}><Icon className="size-5" aria-hidden />{label(l.status)}</Btn>
             })}
           </div>
+          {l.feedbackKinds.length > 0 && <FeedbackForm listingId={l.id} kinds={l.feedbackKinds} />}
         </aside>
       </div>
     </>

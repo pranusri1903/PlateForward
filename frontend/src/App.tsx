@@ -8,6 +8,7 @@ import { AuthProvider } from '@/lib/auth'
 const Admin = lazy(() => import('@/pages/Admin'))
 const Browse = lazy(() => import('@/pages/Browse'))
 const Dashboard = lazy(() => import('@/pages/Dashboard'))
+const History = lazy(() => import('@/pages/History'))
 const Landing = lazy(() => import('@/pages/Landing'))
 const ListingDetail = lazy(() => import('@/pages/ListingDetail'))
 const Login = lazy(() => import('@/pages/Login'))
@@ -32,7 +33,7 @@ export default function App() {
               <Route path="listings" element={<Browse />} />
               <Route path="listings/:id" element={<ListingDetail />} />
               <Route element={<RequireAuth roles={['DONOR', 'GIVER']} />}><Route path="listings/new" element={<NewListing />} /></Route>
-              <Route element={<RequireAuth roles={['DONOR', 'GIVER', 'ORG', 'TAKER']} />}><Route path="dashboard" element={<Dashboard />} /></Route>
+              <Route element={<RequireAuth roles={['DONOR', 'GIVER', 'ORG', 'TAKER']} />}><Route path="dashboard" element={<Dashboard />} /><Route path="history" element={<History />} /></Route>
               <Route element={<RequireAuth roles={['ADMIN']} />}><Route path="admin" element={<Admin />} /></Route>
               <Route path="*" element={<NotFound />} />
             </Route>

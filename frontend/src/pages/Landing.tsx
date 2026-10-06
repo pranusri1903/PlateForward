@@ -1,6 +1,7 @@
 import { ArrowRight, BadgeCheck, HandHelping, PackageCheck, PencilLine, Sparkles } from 'lucide-react'
 import { motion } from 'motion/react'
 import { Link } from 'react-router'
+import { usePageTitle } from '@/components/hooks'
 import { ListingCard } from '@/components/ListingCard'
 import { buttonStyles } from '@/components/ui/button'
 import { useAuth } from '@/lib/auth'
@@ -18,6 +19,7 @@ const params = new URLSearchParams({ size: '3' })
 const fadeUp = { initial: { opacity: 0, y: 24 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, margin: '-60px' }, transition: { duration: 0.5 } }
 
 export default function Landing() {
+  usePageTitle()
   const { user } = useAuth()
   const { data } = useBrowse(params)
   const live = data?.content ?? []

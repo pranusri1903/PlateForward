@@ -1,16 +1,33 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from 'sonner'
 import { api, ApiError } from './api'
-import type { Action, Listing, NewListing, Page } from './types'
+import type { Action, FeedbackKind, Listing, NewListing, Page } from './types'
 
-export const useListing = (id: string | undefined) => useQuery({ queryKey: ['listing', id], queryFn: () => api<Listing>(`/listings/${id}`), enabled: !!id })
+/** Everything on screen refreshes every 15s (while the tab is visible), so claims and confirmations show up without a reload. */
+const POLL = 15_000
+
+export const useListing = (id: string | undefined) => useQuery({ queryKey: ['listing', id], queryFn: () => api<Listing>(`/listings/${id}`), enabled: !!id, refetchInterval: POLL })
 
 export const useBrowse = (params: URLSearchParams) =>
-  useQuery({ queryKey: ['listings', params.toString()], queryFn: () => api<Page<Listing>>(`/listings?${params}`), placeholderData: keepPreviousData })
+  useQuery({ queryKey: ['listings', params.toString()], queryFn: () => api<Page<Listing>>(`/listings?${params}`), placeholderData: keepPreviousData, refetchInterval: POLL })
 
-export const useMine = () => useQuery({ queryKey: ['mine'], queryFn: () => api<Listing[]>('/listings/mine') })
+export const useMine = () => useQuery({ queryKey: ['mine'], queryFn: () => api<Listing[]>('/listings/mine'), refetchInterval: POLL })
+
+export const useHistory = () => useQuery({ queryKey: ['history'], queryFn: () => api<Listing[]>('/listings/history') })
 
 export const useCreateListing = () => useMutation({ mutationFn: (body: NewListing) => api<Listing>('/listings', { method: 'POST', body }) })
+
+export function useSubmitFeedback(id: number) {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: (body: { kind: FeedbackKind; rating?: number; text: string }) => api(`/listings/${id}/feedback`, { method: 'POST', body }),
+    onSuccess: (_, { kind }) => {
+      queryClient.invalidateQueries({ queryKey: ['listing', String(id)] })
+      toast.success(kind === 'REVIEW' ? 'Thanks for the review!' : 'Report sent. Our team will take a look.')
+    },
+    onError: (e) => toast.error(e.message),
+  })
+}
 
 /** Runs one workflow step. The server decides if it is allowed; on a conflict we just refresh to show the latest state. */
 export function useListingAction(id: number, onDeleted: () => void) {

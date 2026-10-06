@@ -18,3 +18,9 @@ export function useDebounced<T>(value: T, ms = 300) {
   }, [value, ms])
   return debounced
 }
+
+export function usePageTitle(title?: string) {
+  useEffect(() => {
+    document.title = title ? `${title} — PlateForward` : 'PlateForward — good food deserves a second plate'
+  }, [title])
+}

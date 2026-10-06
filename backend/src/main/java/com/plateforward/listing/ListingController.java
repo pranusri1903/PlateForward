@@ -2,10 +2,17 @@ package com.plateforward.listing;
 
 import com.plateforward.listing.Listing.*;
 import jakarta.validation.Valid;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
 import org.springframework.data.web.PagedModel;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +36,23 @@ public class ListingController {
         return service.mine(uid(jwt));
     }
 
+    @GetMapping("/history")
+    List<ListingDto> history(@AuthenticationPrincipal Jwt jwt) {
+        return service.history(uid(jwt));
+    }
+
+    @GetMapping("/history.csv")
+    ResponseEntity<String> historyCsv(@AuthenticationPrincipal Jwt jwt) throws IOException {
+        var out = new StringWriter();
+        try (var csv = new CSVPrinter(out, CSVFormat.DEFAULT)) {
+            csv.printRecord("id", "title", "category", "quantity", "status", "donor", "collected_by", "pickup_start", "picked_up_at");
+            for (var l : service.history(uid(jwt)))
+                csv.printRecord(l.id(), safe(l.title()), l.category(), safe(l.quantity()), l.status(), safe(l.donor().name()), l.claimer() == null ? null : safe(l.claimer().name()), l.pickupStart(), l.pickedUpAt());
+        }
+        return ResponseEntity.ok().header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=plateforward-history.csv")
+                .contentType(new MediaType("text", "csv")).body(out.toString());
+    }
+
     @GetMapping("/{id}")
     ListingDto get(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
         return service.get(id, uid(jwt));
@@ -50,6 +74,11 @@ public class ListingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     void delete(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt) {
         service.act(id, uid(jwt), "delete");
+    }
+
+    /** Spreadsheets run cells that start with = + - @ as formulas, and titles are user-supplied, so neutralize them. */
+    private static String safe(String s) {
+        return s.matches("(?s)^[=+\\-@\\t\\r].*") ? "'" + s : s;
     }
 
     private static Long uid(Jwt jwt) {

@@ -1,3 +1,4 @@
+import { usePageTitle } from '@/components/hooks'
 import { Activity, ArrowRight, BellRing, Hourglass, PackageCheck, ShieldAlert, type LucideIcon } from 'lucide-react'
 import { Link } from 'react-router'
 import { EmptyState } from '@/components/EmptyState'
@@ -13,6 +14,7 @@ const Stat = ({ icon: Icon, value, label }: { icon: LucideIcon; value: number; l
 )
 
 export default function Dashboard() {
+  usePageTitle('Dashboard')
   const { user } = useAuth()
   const { data, isLoading } = useMine()
   if (!user) return null

@@ -1,3 +1,4 @@
+import { usePageTitle } from '@/components/hooks'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addHours, format } from 'date-fns'
 import { Send } from 'lucide-react'
@@ -49,6 +50,7 @@ function Choices<T extends string>({ value, onChange, options, label }: { value:
 }
 
 export default function NewListing() {
+  usePageTitle('Post food')
   const { user } = useAuth()
   const navigate = useNavigate()
   const create = useCreateListing()

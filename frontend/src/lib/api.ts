@@ -35,3 +35,12 @@ export async function api<T>(path: string, { method = 'GET', body }: { method?: 
   if (!res.ok) throw new ApiError(res.status, data?.detail ?? 'Something went wrong. Please try again.', data?.errors)
   return data as T
 }
+
+/** Downloads a file from an authenticated endpoint (a plain link can't send the login token). */
+export async function download(path: string, filename: string) {
+  const res = await fetch(`${BASE}/api${path}`, { headers: { Authorization: `Bearer ${token.get()}` } })
+  if (!res.ok) throw new ApiError(res.status, 'Download failed. Please try again.')
+  const url = URL.createObjectURL(await res.blob())
+  Object.assign(document.createElement('a'), { href: url, download: filename }).click()
+  URL.revokeObjectURL(url)
+}

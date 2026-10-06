@@ -18,6 +18,7 @@ function Navbar() {
     <>
       <NavLink to="/listings" className={navLink} onClick={close}>Browse food</NavLink>
       {user && <NavLink to={homePath(user)} className={navLink} onClick={close}>{user.role === 'ADMIN' ? 'Admin' : 'Dashboard'}</NavLink>}
+      {user && user.role !== 'ADMIN' && <NavLink to="/history" className={navLink} onClick={close}>History</NavLink>}
     </>
   )
   return (
@@ -77,7 +78,7 @@ export function Layout() {
         <Suspense fallback={<div className="h-96" aria-busy />}><Outlet /></Suspense>
       </motion.main>
       <footer className="py-10 text-center text-sm text-stone-400">Made to keep good food on plates, not in bins. 🌱</footer>
-      <Toaster position="top-right" richColors closeButton />
+      <Toaster position="bottom-right" richColors closeButton />
     </div>
   )
 }

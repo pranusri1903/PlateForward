@@ -1,3 +1,4 @@
+import { usePageTitle } from '@/components/hooks'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Controller, useForm } from 'react-hook-form'
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router'
@@ -21,6 +22,7 @@ const schema = z.object({
 type Form = z.infer<typeof schema>
 
 export default function Register() {
+  usePageTitle('Create account')
   const { user, signIn } = useAuth()
   const navigate = useNavigate()
   const initial = useSearchParams()[0].get('role') as Form['role']

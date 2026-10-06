@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight, Search, SearchX } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router'
-import { useDebounced } from '@/components/hooks'
+import { useDebounced, usePageTitle } from '@/components/hooks'
 import { ListingCard, ListingCardSkeleton } from '@/components/ListingCard'
 import { EmptyState } from '@/components/EmptyState'
 import { Button } from '@/components/ui/button'
@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils'
 const chip = (active: boolean) => cn('shrink-0 rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition', active ? 'bg-stone-900 text-white shadow-md' : 'bg-white text-stone-700 ring-1 ring-stone-200 hover:bg-stone-100')
 
 export default function Browse() {
+  usePageTitle('Browse food')
   const [params, setParams] = useSearchParams()
   const [q, setQ] = useState(params.get('q') ?? '')
   const debouncedQ = useDebounced(q)
