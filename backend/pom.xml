@@ -78,6 +78,11 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>org.testcontainers</groupId>
+			<artifactId>testcontainers-postgresql</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-csv</artifactId>
 			<version>1.14.1</version>
@@ -125,7 +130,25 @@
 	</dependencies>
 
 	<build>
+		<!-- ".nosync" tells iCloud not to sync build output (it was restoring stale copies like "Foo 2.class" and breaking builds) -->
+		<directory>${project.basedir}/target.nosync</directory>
 		<plugins>
+			<plugin>
+				<!-- Coverage: mvn verify, then open target.nosync/site/jacoco/index.html -->
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.15</version>
+				<executions>
+					<execution>
+						<goals><goal>prepare-agent</goal></goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>verify</phase>
+						<goals><goal>report</goal></goals>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
