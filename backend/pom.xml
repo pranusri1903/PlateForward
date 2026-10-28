@@ -28,6 +28,8 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+		<!-- Newer than Spring Boot's default; fixes false "Flexible Constructor Bodies" errors in VS Code's Java checker on JDK 25 -->
+		<lombok.version>1.18.48</lombok.version>
 	</properties>
 	<dependencies>
 		<dependency>
