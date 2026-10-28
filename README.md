@@ -1,5 +1,7 @@
 # PlateForward
 
+[![CI](https://github.com/pranusri1903/PlateForward/actions/workflows/ci.yml/badge.svg)](https://github.com/pranusri1903/PlateForward/actions/workflows/ci.yml)
+
 Connects food donors with community organizations and manages pickups: Listed → Claimed → Confirmed → Picked up / Expired.
 
 **Stack:** React (Phase 2) · Spring Boot 4 (Java 21) · PostgreSQL · Flyway
