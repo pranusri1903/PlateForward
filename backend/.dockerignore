@@ -1,0 +1,6 @@
+target
+target.nosync
+.git
+.idea
+.vscode
+*.md

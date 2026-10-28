@@ -4,6 +4,20 @@ Connects food donors with community organizations and manages pickups: Listed �
 
 **Stack:** React (Phase 2) · Spring Boot 4 (Java 21) · PostgreSQL · Flyway
 
+## Run everything with Docker (easiest)
+Needs only [Docker Desktop](https://www.docker.com/products/docker-desktop/).
+```bash
+docker compose up --build        # first run takes a few minutes while images build
+```
+| What | Where |
+|---|---|
+| App | http://localhost:5173 (log in as `foodbank@demo.com` / `demo1234`) |
+| Email inbox (Mailpit) | http://localhost:8025, every email the app sends lands here |
+| API health | http://localhost:8080/actuator/health |
+
+Stop with `Ctrl+C`. `docker compose down -v` also wipes the database. The stack starts PostgreSQL, the Spring Boot backend (demo profile with sample data),
+the React site behind nginx (which forwards `/api` to the backend) and Mailpit.
+
 ## Run the backend
 ```bash
 createuser plateforward && createdb -O plateforward plateforward   # one-time (password: plateforward)
